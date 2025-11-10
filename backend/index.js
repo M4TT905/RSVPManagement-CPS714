@@ -15,6 +15,7 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 const db = admin.firestore();
+const { rsvp } = require('./RSVP');
 
 // helpful global handlers
 process.on('uncaughtException', err => {
@@ -29,15 +30,34 @@ db.listCollections()
   .then(cols => console.log('Firestore connected, collections:', cols.map(c => c.id)))
   .catch(err => console.error('Firestore connection error:', err));
 
+app.get('/', (req, res) => {
+  res.send('API is running. Try GET /api/data or POST /api/rsvp');
+});
+
 app.get('/api/data', async (req, res) => {
   try {
     console.log('Currently trying to access db');
-    const snapshot = await db.collection('Events').get();
+    const snapshot = await db.collection('RSVP').get();
     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.json(data);
   } catch (error) {
     console.error('Error fetching data from Firestore:', error);
     res.status(500).send('Error fetching data');
+  }
+});
+
+app.post('/api/rsvp', async (req, res) => {
+  try {
+    const { email, eventID } = req.body;
+    if (!email || !eventID) {
+      return res.status(400).json({ error: 'eventId and email are required' });
+    }
+
+      await rsvp(db, {email, eventID});
+      return res.json({ ok: true });
+  } catch (err) {
+    console.error('Error in /api/rsvp:', err);
+    return res.status(500).json({ error: 'Failed to save RSVP' });
   }
 });
 

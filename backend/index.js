@@ -75,7 +75,7 @@ app.post('/api/rsvp', async (req, res) => {
       return res.status(400).json({ error: 'eventId and email are required' });
     }
 
-    await rsvp(db, { email, eventID });
+    await RSVP(db, { email, eventID });
     return res.json({ ok: true });
   } catch (err) {
     console.error('Error in /api/rsvp:', err);
@@ -83,6 +83,23 @@ app.post('/api/rsvp', async (req, res) => {
   }
 });
 
+
+//Cancel RSVP
+app.post('/api/rsvp/cancel', async (req, res) => {
+  try {
+    const { email, eventID } = req.body;
+
+    if (!email || !eventID) {
+      return res.status(400).json({ ok: false, error: 'eventId and email are required' });
+    }
+
+    await cancelRSVP(db, { email, eventID });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('Error in /api/rsvp:', err);
+    return res.status(500).json({ error: 'Failed to save RSVP' });
+  }
+});
 
 // Added by me(Olamide): Waitlist system routes
 // This connects to waitlistRoutes.js, which handles:

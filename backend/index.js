@@ -25,7 +25,7 @@ const db = admin.firestore();
 // The RSVP routes were originally here from the main project
 const { rsvp } = require('./RSVP');
 
-// ✅ Added by me(Olamide): new waitlist routes ( RSVP & Waitlist)
+// Added by me(Olamide): new waitlist routes ( RSVP & Waitlist)
 // These handle automatic waitlist management when an event is full
 const waitlistRoutes = require('./waitlistRoutes');
 
@@ -84,7 +84,7 @@ app.post('/api/rsvp', async (req, res) => {
 });
 
 
-// ✅ Added by me(Olamide): Waitlist system routes
+// Added by me(Olamide): Waitlist system routes
 // This connects to waitlistRoutes.js, which handles:
 // - Adding users to the waitlist when an event is full
 // - Promoting users when a spot opens
